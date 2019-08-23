@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ultimate Tic-tac-toe</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <% include blocks/reset.ejs%>
+    <% include blocks/gameStyle.ejs%>
+    <% include blocks/bodyStyle.ejs%>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+
+<% include blocks/header.ejs%>
+
+<div class="bgBlock sideCard leftSide">
+    <h1>Nickname:</h1>
+    <h2 id = "userName"><%=currentUser%></h2>
+    <h1>Room:</h1>
+    <h2 id = "roomh2"><%=room%></h2>
+</div>
+<div class="bgBlock sideCard rightSide">
+    <h1>Players online:</h1>
+    <h2 id="userCountH2">lol</h2>
+</div>
+
+<div class="bgBlock centerCard" >
+
+    <h1 class="game-title" id="message">Ходит игрок X</h1>
+    <div class="gameBlock leftG" id="Block1">
+        <div class="game" id="Game1">
+            <div class="game-item" id="11"></div>
+            <div class="game-item" id="12"></div>
+            <div class="game-item" id="13"></div>
+            <div class="game-item" id="14"></div>
+            <div class="game-item" id="15"></div>
+            <div class="game-item" id="16"></div>
+            <div class="game-item" id="17"></div>
+            <div class="game-item" id="18"></div>
+            <div class="game-item" id="19"></div>
+        </div>
+    </div>
+    <div class="gameBlock otherG" id="Block2">
+        <div class="game" id="Game2">
+            <div class="game-item" id="21"></div>
+            <div class="game-item" id="22"></div>
+            <div class="game-item" id="23"></div>
+            <div class="game-item" id="24"></div>
+            <div class="game-item" id="25"></div>
+            <div class="game-item" id="26"></div>
+            <div class="game-item" id="27"></div>
+            <div class="game-item" id="28"></div>
+            <div class="game-item" id="29"></div>
+        </div>
+    </div>
+    <div class="gameBlock otherG" id="Block3">
+        <div class="game" id="Game3">
+            <div class="game-item" id="31"></div>
+            <div class="game-item" id="32"></div>
+            <div class="game-item" id="33"></div>
+            <div class="game-item" id="34"></div>
+            <div class="game-item" id="35"></div>
+            <div class="game-item" id="36"></div>
+            <div class="game-item" id="37"></div>
+            <div class="game-item" id="38"></div>
+            <div class="game-item" id="39"></div>
+        </div>
+    </div>
+    <div class="gameBlock leftG" id="Block4">
+        <div class="game" id="Game4">
+            <div class="game-item" id="41"></div>
+            <div class="game-item" id="42"></div>
+            <div class="game-item" id="43"></div>
+            <div class="game-item" id="44"></div>
+            <div class="game-item" id="45"></div>
+            <div class="game-item" id="46"></div>
+            <div class="game-item" id="47"></div>
+            <div class="game-item" id="48"></div>
+            <div class="game-item" id="49"></div>
+        </div>
+    </div>
+    <div class="gameBlock otherG" id="Block5">
+        <div class="game" id="Game5">
+            <div class="game-item" id="51"></div>
+            <div class="game-item" id="52"></div>
+            <div class="game-item" id="53"></div>
+            <div class="game-item" id="54"></div>
+            <div class="game-item" id="55"></div>
+            <div class="game-item" id="56"></div>
+            <div class="game-item" id="57"></div>
+            <div class="game-item" id="58"></div>
+            <div class="game-item" id="59"></div>
+        </div>
+    </div>
+    <div class="gameBlock otherG" id="Block6">
+        <div class="game" id="Game6">
+            <div class="game-item" id="61"></div>
+            <div class="game-item" id="62"></div>
+            <div class="game-item" id="63"></div>
+            <div class="game-item" id="64"></div>
+            <div class="game-item" id="65"></div>
+            <div class="game-item" id="66"></div>
+            <div class="game-item" id="67"></div>
+            <div class="game-item" id="68"></div>
+            <div class="game-item" id="69"></div>
+        </div>
+    </div>
+    <div class="gameBlock leftG" id="Block7">
+        <div class="game" id="Game7">
+            <div class="game-item" id="71"></div>
+            <div class="game-item" id="72"></div>
+            <div class="game-item" id="73"></div>
+            <div class="game-item" id="74"></div>
+            <div class="game-item" id="75"></div>
+            <div class="game-item" id="76"></div>
+            <div class="game-item" id="77"></div>
+            <div class="game-item" id="78"></div>
+            <div class="game-item" id="79"></div>
+        </div>
+    </div>
+    <div class="gameBlock otherG" id="Block8">
+        <div class="game" id="Game8">
+            <div class="game-item" id="81"></div>
+            <div class="game-item" id="82"></div>
+            <div class="game-item" id="83"></div>
+            <div class="game-item" id="84"></div>
+            <div class="game-item" id="85"></div>
+            <div class="game-item" id="86"></div>
+            <div class="game-item" id="87"></div>
+            <div class="game-item" id="88"></div>
+            <div class="game-item" id="89"></div>
+        </div>
+    </div>
+    <div class="gameBlock otherG" id="Block9">
+        <div class="game" id="Game9">
+            <div class="game-item" id="91"></div>
+            <div class="game-item" id="92"></div>
+            <div class="game-item" id="93"></div>
+            <div class="game-item" id="94"></div>
+            <div class="game-item" id="95"></div>
+            <div class="game-item" id="96"></div>
+            <div class="game-item" id="97"></div>
+            <div class="game-item" id="98"></div>
+            <div class="game-item" id="99"></div>
+        </div>
+    </div>
+
+
+
+<button class='buttonEffect bgBlock'  id="restart"><h2>Restart</h2></button>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+
+    var socket = io();
+    var user = document.getElementById("userName").innerHTML;
+
+
+    socket.on('msg2Client', function (data) {
+        alert(data);
+    });
+
+    socket.on('refreshCount', function (userCount) {
+        document.getElementById("userCountH2").innerHTML = userCount.toString();
+    })
+
+
+    function serverLog(text) {
+        socket.emit('msg2Server', {msg: text});
+    }
+
+</script>
+<body>
+
+
+<% include blocks/gameScript.ejs%>
+<html>

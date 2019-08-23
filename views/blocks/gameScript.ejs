@@ -1,0 +1,193 @@
+<script>
+
+    var ceil = document.getElementsByClassName("game-item"),
+        reset = document.getElementById("restart"),
+        message = document.getElementById("message"),
+        user = document.getElementById("userName").innerHTML,
+        room = document.getElementById("roomh2").innerHTML,
+        player = "X",
+        stepCount = 0,
+        opponentWantRestart = false,
+        iWantRestart = false,
+        nextStapBlock = 0,// 0 - можно ходить куда угодно
+        winCombinations = [
+            [1, 2, 3],
+            [1, 4, 7],
+            [1, 5, 9],
+            [2, 5, 8],
+            [3, 6, 9],
+            [3, 5, 7],
+            [4, 5, 6],
+            [7, 8, 9]
+        ],
+        dataX = [[], [], [], [], [], [], [], [], [], []],
+        dataO = [[], [], [], [], [], [], [], [], [], []];
+
+        var yourStep = false;
+        if (user == room){
+            yourStep = true;
+        }
+        if (yourStep){
+            message.innerText = "Your turn";
+        }else{
+            message.innerText = "Opponent`s turn";
+        }
+
+        socket.emit('joinRoom', room);
+
+    for (var i = 0; i < ceil.length; i++) {
+        ceil[i].addEventListener("click", currentStep);
+    }
+
+    function currentStep() {
+        if (yourStep){
+            var num = this.getAttribute("id");
+            var gameBlockIndex = Math.floor(num/10);
+            if (
+                gameBlockIndex == nextStapBlock || nextStapBlock == 0
+                || (dataO[nextStapBlock].length + dataX[nextStapBlock].length)==9
+            ){
+                socket.emit('doGameStep', {num : num, room  : room});
+            }
+        }
+    }
+
+    function currentStepWithNum(num) {
+        yourStep = !yourStep;
+        var item = document.getElementById(num);
+        item.removeEventListener("click", currentStep);
+        var gameBlockIndex = Math.floor(num/10);
+        var itemIndex = num%10;
+
+        showNextStapBlock(nextStapBlock, itemIndex);
+
+        nextStapBlock = itemIndex;
+
+        if (!item.textContent) {
+            //в зависимости от текущего игрока ставим символ и запоминаем
+            item.innerText = player;
+            if (player === "X"){
+                dataX[gameBlockIndex].push(itemIndex);
+                item.classList.add("x");
+            } else{
+                dataO[gameBlockIndex].push(itemIndex);
+                item.classList.add("o");
+            }
+            
+            //проверим на выигрыш этот блок
+            if (
+                (dataO[gameBlockIndex].length > 2 || dataX[gameBlockIndex].length > 2) &&
+                (checkWin(dataO[gameBlockIndex], itemIndex) || checkWin(dataX[gameBlockIndex], itemIndex))
+            ) {
+
+                if (!dataX[0].find(function (current) {
+                    return current == gameBlockIndex;
+                }) && !dataO[0].find(function (current) {
+                    return current == gameBlockIndex;
+                })){
+                    //подсветим блок
+                    markGameBlock(gameBlockIndex);
+                    //в массиве с индексом 0 храним инфо о блоках
+                    if (player === "X") {
+                        dataX[0].push(gameBlockIndex);
+                    } else {
+                        dataO[0].push(gameBlockIndex);
+                    }
+
+
+                    //проверим на абсолютную победу
+                    if ((checkWin(dataO[0], gameBlockIndex) || checkWin(dataX[0], gameBlockIndex))) {
+                        for (var i = 0; i < ceil.length; i++) {
+                            ceil[i].removeEventListener("click", currentStep);
+                        }
+                        return (message.innerText = player + " win!");
+                    }
+                }
+            }
+            changePlayer()
+            stepCount++;
+            if (stepCount === 81){
+                message.innerText = "Draw!";
+            }else if (yourStep){
+                message.innerText = "Your turn";
+            }else{
+                message.innerText = "Opponent`s turn";
+            }
+
+        }
+    }
+
+    socket.on('watchGameStep', function (data) {
+        currentStepWithNum(data);
+    });
+
+    function changePlayer() {
+        if (player == "X") {
+            player = "O";
+        }else{
+            player ="X";
+        }
+    }
+
+
+    socket.on('want2Restart', function () {
+        opponentWantRestart = true;
+        if (iWantRestart){
+            restart();
+        }else {
+            alert("Opponent wants to restart game. Press button on your page to conform");
+        }
+    });
+
+    reset.addEventListener("click", function() {
+        iWantRestart = true;
+        socket.emit('want2Restart', room);
+        if (opponentWantRestart){
+            window.location.reload();
+        }
+    });
+
+
+    function checkWin(arr, number) {
+        for (var w = 0, wLen = winCombinations.length; w < wLen; w++) {
+            var someWinArr = winCombinations[w],
+                count = 0;
+            if (someWinArr.indexOf(number) !== -1) {
+                for (var k = 0, kLen = someWinArr.length; k < kLen; k++) {
+                    if (arr.indexOf(someWinArr[k]) !== -1) {
+                        count++;
+                        if (count === 3) {
+                            return true;
+                        }
+                    }
+                }
+                count = 0;
+            }
+        }
+    }
+    
+    function markGameBlock(gameBlockIndex) {
+        var block = document.getElementById("Block"+gameBlockIndex);
+        if (player == "X"){
+            block.style.backgroundColor = "rgba(255, 0, 0, 0.6)";
+        }else {
+            block.style.backgroundColor = "rgba(0, 255, 0, 0.6)";
+        }
+    }
+
+    function showNextStapBlock(old, next) {
+        if (old!= 0){
+            var block = document.getElementById("Block"+old);
+            var game = document.getElementById("Game"+old);
+            block.style.border = "none";
+            game.style.margin = "9px";
+        }
+        if (next!= 0){
+            block = document.getElementById("Block"+next);
+            var game = document.getElementById("Game"+next);
+            block.style.border = "rgb(0,200,255) dashed 3px";
+            game.style.margin = "6px";
+        }
+    }
+
+</script>

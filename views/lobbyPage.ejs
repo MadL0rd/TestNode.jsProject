@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ultimate Tic-tac-toe</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <% include blocks/reset.ejs%>
+    <% include blocks/bodyStyle.ejs%>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+
+<% include blocks/header.ejs%>
+
+<div class="bgBlock sideCard leftSide">
+    <h1>Nickname:</h1>
+    <h2 id = "userName"><%= currentUser%></h2>
+</div>
+<div class="bgBlock sideCard rightSide">
+    <h1>Players online:</h1>
+    <h2 id="userCountH2">lol</h2>
+</div>
+
+<div class="bgBlock centerCard">
+
+    <h1 class="game-title" id="message" style="font-size: 30px; margin: 3%">Join one of this games or create own</h1>
+    <div id="place4Games">
+
+    </div>
+    <button class='buttonEffect bgBlock'  id="NewGame"><h2>Create game</h2></button>
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+
+    var socket = io();
+    var user = document.getElementById("userName");
+
+    document.getElementById("NewGame").addEventListener("click", creaneNewGame);
+    function creaneNewGame(){
+        socket.emit('createGame', { name: document.getElementById("userName").innerHTML });
+    }
+
+
+    socket.on('msg2Client', function (data) {
+        alert(data);
+    });
+
+    socket.on('refreshCount', function (userCount) {
+        document.getElementById("userCountH2").innerHTML = userCount.toString();
+    })
+
+    socket.on('addGame', function (game) {
+        document.getElementById("place4Games").innerHTML+= " <div class='buttonEffect bgBlock' onclick='chooseGame(this)'> <h1>"+ game +"</h1> </div> ";
+    });
+
+    socket.on('clearGames', function () {
+        document.getElementById("place4Games").innerHTML= '';
+    });
+
+    socket.on('joinFight', function (room) {
+        window.location.href = 'http://'+ document.location.host +'/game?room='+ room +'&nickname='+document.getElementById("userName").innerHTML;
+    });
+
+    function chooseGame(e) {
+        socket.emit('joinGame', { name: e.innerHTML.substr(5, e.innerHTML.length-11) });
+    }
+
+    function serverLog(text) {
+        socket.emit('msg2Server', {msg: text});
+    }
+
+</script>
+<body>
+<html>
